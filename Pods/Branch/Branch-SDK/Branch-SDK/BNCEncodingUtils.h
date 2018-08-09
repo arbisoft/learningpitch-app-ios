@@ -6,33 +6,7 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#if __has_feature(modules)
-@import Foundation;
-#else
 #import <Foundation/Foundation.h>
-#endif
-
-#pragma mark BNCWireFormat
-
-extern NSDate*   BNCDateFromWireFormat(id object);
-extern NSNumber* BNCWireFormatFromDate(NSDate *date);
-
-extern NSString* BNCStringFromWireFormat(id object);
-extern NSString* BNCWireFormatFromString(NSString *string);
-
-#pragma mark - BNCKeyValue
-
-@interface BNCKeyValue : NSObject
-
-+ (BNCKeyValue*) key:(NSString*)key value:(NSString*)value;
-- (NSString*) description;
-
-@property (nonatomic, strong) NSString* key;
-@property (nonatomic, strong) NSString* value;
-
-@end
-
-#pragma mark - BNCEncodingUtils
 
 @interface BNCEncodingUtils : NSObject
 
@@ -48,9 +22,6 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary;
 + (NSData *)encodeDictionaryToJsonData:(NSDictionary *)dictionary;
 
-+ (NSString*) stringByPercentDecodingString:(NSString*)string;
-+ (NSString*) stringByPercentEncodingStringForQuery:(NSString *)string;
-
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData;
 + (NSDictionary *)decodeJsonStringToDictionary:(NSString *)jsonString;
 + (NSDictionary *)decodeQueryStringToDictionary:(NSString *)queryString;
@@ -58,7 +29,4 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 
 + (NSString *) hexStringFromData:(NSData*)data;
 + (NSData *)   dataFromHexString:(NSString*)string;
-
-+ (NSArray<BNCKeyValue*>*) queryItems:(NSURL*)URL;
-
 @end

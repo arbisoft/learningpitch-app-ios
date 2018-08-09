@@ -11,7 +11,6 @@
 #import "BNCLog.h"
 #import "BNCDebug.h"
 #import "BNCError.h"
-#import "BNCConfig.h"
 
 #pragma mark BNCNetworkOperation
 
@@ -38,8 +37,8 @@
 
 - (void) startOperation:(BNCNetworkOperation*)operation;
 
-@property (strong, atomic, readonly) NSURLSession *session;
-@property (strong, atomic) NSOperationQueue *sessionQueue;
+@property (strong, readonly) NSURLSession *session;
+@property (strong) NSOperationQueue *sessionQueue;
 @end
 
 #pragma mark - BNCNetworkOperation
@@ -75,7 +74,7 @@
 
 @implementation BNCNetworkService
 
-+ (instancetype) new {
++ (id<BNCNetworkServiceProtocol>) new {
     return [[self alloc] init];
 }
 
@@ -173,7 +172,7 @@
 #pragma mark - Operations
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
-                completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion {
+                completion:(void (^)(BNCNetworkOperation*operation))completion {
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
     if (![request isKindOfClass:[NSMutableURLRequest class]]) {
@@ -211,20 +210,12 @@
                 operation.responseData = data;
                 operation.response = (NSHTTPURLResponse*) response;
                 operation.error = error;
-                if (operation.response.statusCode == 404) {
-                    // Don't print 404 messages because they look like an error.
-                    BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld.",
-                        operation.request.URL.absoluteString,
-                        [[NSDate date] timeIntervalSinceDate:operation.startDate],
-                        (long)operation.response.statusCode);
-                } else {
-                    BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
-                        operation.request.URL.absoluteString,
-                        [[NSDate date] timeIntervalSinceDate:operation.startDate],
-                        (long)operation.response.statusCode,
-                        operation.error,
-                        operation.stringFromResponseData);
-                }
+                BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                    operation.request.URL.absoluteString,
+                    [[NSDate date] timeIntervalSinceDate:operation.startDate],
+                    (long)operation.response.statusCode,
+                    operation.error,
+                    operation.stringFromResponseData);
                 if (operation.completionBlock)
                     operation.completionBlock(operation);
             }];
@@ -282,11 +273,6 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
             trusted = YES;
             goto exit;
         }
-    }
-
-    if (!BNC_API_PINNED) {
-        trusted = YES;
-        goto exit;
     }
 
 exit:

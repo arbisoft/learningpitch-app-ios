@@ -32,7 +32,7 @@
 @implementation BranchShortUrlSyncRequest
 
 - (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache {
-    if ((self = [super init])) {
+    if (self = [super init]) {
         _tags = tags;
         _alias = alias;
         _type = type;
@@ -54,7 +54,8 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    if (_alias.length == 0)
+        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 
     return [serverInterface postRequestSynchronous:params
@@ -104,33 +105,25 @@
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
 }
 
-+ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl
-                                  tags:(NSArray *)tags
-                                 alias:(NSString *)alias
-                                  type:(BranchLinkType)type
-                         matchDuration:(NSInteger)duration
-                               channel:(NSString *)channel
-                               feature:(NSString *)feature
-                                 stage:(NSString *)stage
-                                params:(NSDictionary *)params {
++ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
     for (NSString *tag in tags) {
-        [baseUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
+        [baseUrl appendFormat:@"tags=%@&", tag];
     }
     
     if ([alias length]) {
-        [baseUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:alias]];
+        [baseUrl appendFormat:@"alias=%@&", alias];
     }
     
     if ([channel length]) {
-        [baseUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:channel]];
+        [baseUrl appendFormat:@"channel=%@&", channel];
     }
     
     if ([feature length]) {
-        [baseUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:feature]];
+        [baseUrl appendFormat:@"feature=%@&", feature];
     }
     
     if ([stage length]) {
-        [baseUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:stage]];
+        [baseUrl appendFormat:@"stage=%@&", stage];
     }
     
     [baseUrl appendFormat:@"type=%ld&", (long)type];
@@ -140,7 +133,7 @@
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
     NSString *urlEncodedBase64EncodedParams = [BNCEncodingUtils urlEncodedString:base64EncodedParams];
     [baseUrl appendFormat:@"source=ios&data=%@", urlEncodedBase64EncodedParams];
-
+    
     return baseUrl;
 }
 

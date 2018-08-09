@@ -1,14 +1,21 @@
-/**
- @file          BNCLog.h
- @package       Branch-SDK
- @brief         Simple logging functions.
 
- @author        Edward Smith
- @date          October 2016
- @copyright     Copyright © 2016 Branch. All rights reserved.
-*/
 
+//--------------------------------------------------------------------------------------------------
+//
+//                                                                                          BNCLog.h
+//                                                                                  Branch.framework
+//
+//                                                                          Simple logging functions
+//                                                                        Edward Smith, October 2016
+//
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
+//
+//--------------------------------------------------------------------------------------------------
+
+
+#import <Foundation/Foundation.h>
 #import "BNCDebug.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,13 +59,13 @@ extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 * @param level The log level to convert to a string.
 * @return Returns the string indicating the log level.
 */
-extern NSString *_Nonnull BNCLogStringFromLogLevel(BNCLogLevel level);
+extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 
 /*!
 * @param string A string indicating the log level.
 * @return Returns The log level corresponding to the string.
 */
-extern BNCLogLevel BNCLogLevelFromString(NSString*_Null_unspecified string);
+extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
 
 
 #pragma mark - Programmatic Breakpoints
@@ -71,20 +78,10 @@ extern BOOL BNCLogBreakPointsAreEnabled(void);
 extern void BNCLogSetBreakPointsEnabled(BOOL enabled);
 
 
-#pragma mark - Client Initialization Function
-
-
-typedef void (*BNCLogClientInitializeFunctionPtr)(void);
-
-///@param clientInitializationFunction The client function that should be called before logging starts.
-extern BNCLogClientInitializeFunctionPtr _Null_unspecified
-    BNCLogSetClientInitializeFunction(BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction);
-
-
 #pragma mark - Optional Log Output Handlers
 
 
-///@brief Pre-defined log message handlers --
+///@info Pre-defined log message handlers --
 
 typedef void (*BNCLogOutputFunctionPtr)(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
 

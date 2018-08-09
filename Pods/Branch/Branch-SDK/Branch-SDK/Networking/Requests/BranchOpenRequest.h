@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerRequest.h"
-#import "BNCCallbacks.h"
+#import "Branch.h"
 
 @interface BranchOpenRequest : BNCServerRequest
 
@@ -19,6 +19,5 @@
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
-+ (NSNumber*) appUpdateState;
 
 @end

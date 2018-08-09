@@ -9,4 +9,5 @@
 #import "BNCServerRequest.h"
 
 @interface BranchCloseRequest : BNCServerRequest
+
 @end

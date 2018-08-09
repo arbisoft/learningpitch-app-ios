@@ -1,19 +1,25 @@
+
+
+//--------------------------------------------------------------------------------------------------
+//
+//                                                                                        BNCDebug.h
+//                                                                                  Branch.framework
+//
+//                                                                                 Debugging Support
+//                                                                        Edward Smith, October 2016
+//
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
+//
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
 /**
- @file          BNCDebug.h
- @package       Branch-SDK
- @brief         Debugging Support.
 
- @author        Edward Smith
- @date          October 2016
- @copyright     Copyright © 2016 Branch. All rights reserved.
-*/
+    BNCDebug
+    ========
 
-/**
-    @discusion
-
-    # BNCDebug
-
-    ## Useful run time debugging environmental variables
+    # Useful run time debugging environmental variables
 
     Set DYLD_IMAGE_SUFFIX to _debug to load debug versions of dynamic libraries.
     Set NSDebugEnabled to YES to enable obj-c debug checks.
@@ -38,13 +44,13 @@
     Search the heap for all references to the pointer 0x0000000116e13920:
 
        ptr_refs -m 0x0000000116e13920
-*/
 
-#if __has_feature(modules)
-@import Foundation;
-#else
+*/
+//--------------------------------------------------------------------------------------------------
+
+
 #import <Foundation/Foundation.h>
-#endif
+
 
 #ifdef __cplusplus
 extern "C" {

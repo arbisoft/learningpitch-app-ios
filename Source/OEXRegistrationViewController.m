@@ -220,34 +220,38 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
 }
 
 - (void)refreshFormFields {
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        // Add view to scroll view if field is not optional and it is not agreement field.
-        UIView* view = fieldController.view;
-        if(fieldController.field.isRequired && ![self shouldFilterField:fieldController.field]) {
-            [self.scrollView addSubview:view];
-            [view setNeedsLayout];
-            [view layoutIfNeeded];
-        }
-        else {
-            [view removeFromSuperview];
-        }
-    }
-
-    // Actually show the optional fields if necessary
-    if(self.isShowingOptionalFields) {
+    
+    if (self.externalAccessToken && self.externalProvider) {
+        
         for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-            if(![fieldController field].isRequired && ![self shouldFilterField:fieldController.field]) {
-                UIView* view = fieldController.view;
+            // Add view to scroll view if field is not optional and it is not agreement field.
+            UIView* view = fieldController.view;
+            if(fieldController.field.isRequired && ![self shouldFilterField:fieldController.field]) {
                 [self.scrollView addSubview:view];
                 [view setNeedsLayout];
                 [view layoutIfNeeded];
             }
+            else {
+                [view removeFromSuperview];
+            }
         }
+        
+        // Actually show the optional fields if necessary
+        if(self.isShowingOptionalFields) {
+            for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+                if(![fieldController field].isRequired && ![self shouldFilterField:fieldController.field]) {
+                    UIView* view = fieldController.view;
+                    [self.scrollView addSubview:view];
+                    [view setNeedsLayout];
+                    [view layoutIfNeeded];
+                }
+            }
+        }
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
+        [self viewDidLayoutSubviews];
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
     }
-    [self.view setNeedsLayout];
-    [self.view layoutIfNeeded];
-    [self viewDidLayoutSubviews];
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
 }
 
 - (void)updateViewConstraints {
@@ -280,57 +284,60 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     CGSize size = [self.currentHeadingView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
     offset = topSpacing + size.height;
     
-    BOOL isOptionalFieldPresent = NO;
-    
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        UIView* view = fieldController.view;
-        // Add view to scroll view if field is not optional and it is not agreement field.
-        if([fieldController field].isRequired && view.superview != nil) {
-            [view layoutIfNeeded];
-            [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
-            offset = offset + view.frame.size.height;
-        }
-        if(![fieldController field].isRequired) {
-            isOptionalFieldPresent = YES;
-        }
-    }
-    
-    if (isOptionalFieldPresent) {
-        //Add the optional field toggle
-        CGFloat buttonWidth = 150;
-        CGFloat buttonHeight = 30;
-        [self.scrollView addSubview:self.optionalFieldsSeparator];
-        [self.toggleOptionalFieldsButton setFrame:CGRectMake(self.view.frame.size.width / 2 - buttonWidth / 2, offset, buttonWidth, buttonHeight)];
-        [self.scrollView addSubview:self.toggleOptionalFieldsButton];
-        self.optionalFieldsSeparator.frame = CGRectMake(horizontalSpacing, self.toggleOptionalFieldsButton.center.y, contentWidth, 1);
-        self.optionalFieldsSeparator.center = self.toggleOptionalFieldsButton.center;
+    if (self.externalAccessToken && self.externalProvider) {
         
-        offset = offset + buttonHeight + 10;
-    }
-    
-    // Actually show the optional fields if necessary
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        UIView* view = fieldController.view;
-        if(![fieldController field].isRequired && view.superview != nil) {
-            [view layoutIfNeeded];
-            [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
-            [self.scrollView addSubview:view];
-            offset = offset + view.frame.size.height;
+        BOOL isOptionalFieldPresent = NO;
+        
+        for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+            UIView* view = fieldController.view;
+            // Add view to scroll view if field is not optional and it is not agreement field.
+            if([fieldController field].isRequired && view.superview != nil) {
+                [view layoutIfNeeded];
+                [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
+                offset = offset + view.frame.size.height;
+            }
+            if(![fieldController field].isRequired) {
+                isOptionalFieldPresent = YES;
+            }
         }
+        
+        if (isOptionalFieldPresent) {
+            //Add the optional field toggle
+            CGFloat buttonWidth = 150;
+            CGFloat buttonHeight = 30;
+            [self.scrollView addSubview:self.optionalFieldsSeparator];
+            [self.toggleOptionalFieldsButton setFrame:CGRectMake(self.view.frame.size.width / 2 - buttonWidth / 2, offset, buttonWidth, buttonHeight)];
+            [self.scrollView addSubview:self.toggleOptionalFieldsButton];
+            self.optionalFieldsSeparator.frame = CGRectMake(horizontalSpacing, self.toggleOptionalFieldsButton.center.y, contentWidth, 1);
+            self.optionalFieldsSeparator.center = self.toggleOptionalFieldsButton.center;
+            
+            offset = offset + buttonHeight + 10;
+        }
+        
+        // Actually show the optional fields if necessary
+        for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+            UIView* view = fieldController.view;
+            if(![fieldController field].isRequired && view.superview != nil) {
+                [view layoutIfNeeded];
+                [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
+                [self.scrollView addSubview:view];
+                offset = offset + view.frame.size.height;
+            }
+        }
+        
+        [self.registerButton setFrame:CGRectMake(horizontalSpacing, offset, contentWidth, 40)];
+        
+        const int progressIndicatorCenterX = [self isRTL] ? 40 : self.registerButton.frame.size.width - 40;
+        
+        self.progressIndicator.center = CGPointMake(progressIndicatorCenterX, self.registerButton.frame.size.height / 2);
+        
+        [self.scrollView addSubview:self.registerButton];
+        offset = offset + 40;
+        
+        [self.scrollView addSubview:self.agreementTextView];
+        [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
+        offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     }
-    
-    [self.registerButton setFrame:CGRectMake(horizontalSpacing, offset, contentWidth, 40)];
-
-    const int progressIndicatorCenterX = [self isRTL] ? 40 : self.registerButton.frame.size.width - 40;
-
-    self.progressIndicator.center = CGPointMake(progressIndicatorCenterX, self.registerButton.frame.size.height / 2);
-    
-    [self.scrollView addSubview:self.registerButton];
-    offset = offset + 40;
-    
-    [self.scrollView addSubview:self.agreementTextView];
-    [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
-    offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     [self.scrollView setContentSize:CGSizeMake(width, offset)];
 }
 

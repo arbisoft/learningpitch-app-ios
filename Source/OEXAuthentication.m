@@ -115,7 +115,7 @@ OEXNSDataTaskRequestHandler OEXWrapURLCompletion(OEXURLRequestHandler completion
                 return;
             }
             else if(httpResp.statusCode == 401) {
-                error = [NSError errorWithDomain:@"Not valid user" code:401 userInfo:[NSDictionary dictionaryWithObjects:[NSArray arrayWithObject:@"You are not associated with edx please signup up from website"] forKeys:[NSArray arrayWithObject:@"failed"]]];
+                error = [NSError errorWithDomain:@"Not valid user" code:401 userInfo:[NSDictionary dictionaryWithObjects:[NSArray arrayWithObject:[NSString stringWithFormat:@"You are not associated with %@ please signup up from website", [OEXConfig.sharedConfig platformName]]] forKeys:[NSArray arrayWithObject:@"failed"]]];
             }
         }
         OEXWrapURLCompletion(completionBlock)(data, response, error);

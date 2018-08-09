@@ -6,6 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "BNCNetworkServiceProtocol.h"
 
 /**
@@ -33,12 +34,12 @@
 #pragma mark - BNCNetworkService
 
 @interface BNCNetworkService : NSObject <BNCNetworkServiceProtocol>
-+ (instancetype) new;
++ (id<BNCNetworkServiceProtocol>) new;
 
 - (void) cancelAllOperations;
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
-                completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion;
+                completion:(void (^)(BNCNetworkOperation*operation))completion;
 
 - (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys;
 

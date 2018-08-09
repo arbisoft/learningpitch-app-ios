@@ -53,6 +53,10 @@
         self.leftSeparator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"separator3"]];
         self.rightSeparator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"separator3"]];
         
+        [self.emailSuggestion setHidden:YES];
+        [self.leftSeparator setHidden:YES];
+        [self.rightSeparator setHidden:YES];
+        
         [self addSubviews];
     }
     return self;

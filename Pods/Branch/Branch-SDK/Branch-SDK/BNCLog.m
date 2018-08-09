@@ -1,15 +1,20 @@
-/**
- @file          BNCLog.m
- @package       Branch-SDK
- @brief         Simple logging functions.
 
- @author        Edward Smith
- @date          October 2016
- @copyright     Copyright © 2016 Branch. All rights reserved.
-*/
 
-#import "BNCLog.h"
-#import <stdatomic.h> // import not available in Xcode 7
+//--------------------------------------------------------------------------------------------------
+//
+//                                                                                          BNCLog.m
+//                                                                                  Branch.framework
+//
+//                                                                          Simple logging functions
+//                                                                        Edward Smith, October 2016
+//
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
+//
+//--------------------------------------------------------------------------------------------------
+
+
+#import  "BNCLog.h"
+
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 static NSNumber *bnc_LogIsInitialized = nil;
@@ -40,13 +45,6 @@ void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
 #define BNCLogInternalError(...) \
     BNCLogInternalErrorFunction(__LINE__, __VA_ARGS__)
 
-
-inline static void BNCLogInitializeClient_Internal() {
-    BNCLogClientInitializeFunctionPtr initFunction = BNCLogSetClientInitializeFunction(NULL);
-    if (initFunction) {
-        initFunction();
-    }
-}
 
 #pragma mark - Default Output Functions
 
@@ -224,7 +222,7 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
     off_t offset = 0;
     char buffer[bnc_LogRecordSize];
     ssize_t bytesRead = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
-    while ((unsigned long) bytesRead == sizeof(buffer)) {
+    while (bytesRead == sizeof(buffer)) {
         NSString *dateString =
             [[NSString alloc] initWithBytes:buffer length:27 encoding:NSUTF8StringEncoding];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];
@@ -479,13 +477,12 @@ BNCLogLevel BNCLogDisplayLevel() {
 }
 
 void BNCLogSetDisplayLevel(BNCLogLevel level) {
-    BNCLogInitializeClient_Internal();
     dispatch_async(bnc_LogQueue, ^{
         bnc_LogDisplayLevel = level;
     });
 }
 
-static NSString*const bnc_logLevelStrings[] = {
+NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelAll",
     @"BNCLogLevelBreakPoint",
     @"BNCLogLevelDebug",
@@ -497,14 +494,14 @@ static NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelMax"
 };
 
-NSString* BNCLogStringFromLogLevel(BNCLogLevel level) {
+NSString*const BNCLogStringFromLogLevel(BNCLogLevel level) {
     level = MAX(MIN(level, BNCLogLevelMax), 0);
     return bnc_logLevelStrings[level];
 }
 
-BNCLogLevel BNCLogLevelFromString(NSString*string) {
+BNCLogLevel BNBLogLevelFromString(NSString*string) {
     if (!string) return BNCLogLevelNone;
-    for (NSUInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
+    for (NSInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
         if ([bnc_logLevelStrings[i] isEqualToString:string]) {
             return i;
         }
@@ -513,18 +510,6 @@ BNCLogLevel BNCLogLevelFromString(NSString*string) {
         return BNCLogLevelDebugSDK;
     }
     return BNCLogLevelNone;
-}
-
-#pragma mark - Client Initialization Function
-
-static _Atomic(BNCLogClientInitializeFunctionPtr) bnc_LogClientInitializeFunctionPtr = (BNCLogClientInitializeFunctionPtr) 0;
-
-extern BNCLogClientInitializeFunctionPtr _Null_unspecified BNCLogSetClientInitializeFunction(
-        BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction
-    ) {
-    BNCLogClientInitializeFunctionPtr lastPtr =
-        atomic_exchange(&bnc_LogClientInitializeFunctionPtr, clientInitializationFunction);
-    return lastPtr;
 }
 
 #pragma mark - Break Points
@@ -597,7 +582,6 @@ void BNCLogWriteMessageFormat(
         NSString *_Nullable message,
         ...
     ) {
-    BNCLogInitializeClient_Internal();
     if (!file) file = "";
     if (!message) message = @"<nil>";
     if (![message isKindOfClass:[NSString class]]) {
