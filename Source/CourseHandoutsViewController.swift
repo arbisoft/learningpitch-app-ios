@@ -9,7 +9,7 @@
 import UIKit
 public class CourseHandoutsViewController: OfflineSupportViewController, UIWebViewDelegate, LoadStateViewReloadSupport, InterfaceOrientationOverriding {
     
-    public typealias Environment = DataManagerProvider & NetworkManagerProvider & ReachabilityProvider & OEXAnalyticsProvider
+    public typealias Environment = DataManagerProvider & NetworkManagerProvider & ReachabilityProvider & OEXAnalyticsProvider & OEXStylesProvider
 
     let courseID : String
     let environment : Environment
@@ -40,6 +40,7 @@ public class CourseHandoutsViewController: OfflineSupportViewController, UIWebVi
         setConstraints()
         setStyles()
         webView.delegate = self
+        view.backgroundColor = environment.styles.neutralWhite()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
