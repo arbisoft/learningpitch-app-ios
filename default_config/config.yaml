@@ -1,7 +1,7 @@
-API_HOST_URL: 'https://courses.tsbeducation.com'
+API_HOST_URL: 'https://courses.matriconline.com'
 ENVIRONMENT_DISPLAY_NAME: ''
-PLATFORM_NAME: 'TSB Education'
-PLATFORM_DESTINATION_NAME: 'tsbeducation.com'
+PLATFORM_NAME: 'Matric Online'
+PLATFORM_DESTINATION_NAME: 'matriconline.com'
 FEEDBACK_EMAIL_ADDRESS: 'support@example.com'
 
 COURSE_ENROLLMENT:
@@ -22,8 +22,8 @@ TAB_LAYOUTS_ENABLED: true
 
 FACEBOOK:
     ENABLED: true
-    FACEBOOK_APP_ID: '228183481220645'
+    FACEBOOK_APP_ID: '270420543554058'
 
 GOOGLE:
     ENABLED: true
-    GOOGLE_PLUS_KEY: '992313764382-b6gr8orjbstbtuip11ki6pb73i9ao3qu.apps.googleusercontent.com'
+    GOOGLE_PLUS_KEY: '685570419285-b589cj0vhq2e8sgektps8u81aaidh597.apps.googleusercontent.com'
