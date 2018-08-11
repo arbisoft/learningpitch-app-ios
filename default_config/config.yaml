@@ -2,7 +2,7 @@ API_HOST_URL: 'https://courses.myinteracademy.com'
 ENVIRONMENT_DISPLAY_NAME: ''
 PLATFORM_NAME: 'My Inter Academy'
 PLATFORM_DESTINATION_NAME: 'myinteracademy.com'
-FEEDBACK_EMAIL_ADDRESS: 'support@example.com'
+FEEDBACK_EMAIL_ADDRESS: 'feedback@myinteracademy.com'
 
 COURSE_ENROLLMENT:
     TYPE: 'native'
