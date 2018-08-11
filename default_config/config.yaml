@@ -1,7 +1,7 @@
-API_HOST_URL: 'https://courses.tsbeducation.com'
+API_HOST_URL: 'http://courses.mutalashi.com'
 ENVIRONMENT_DISPLAY_NAME: ''
-PLATFORM_NAME: 'TSB Education'
-PLATFORM_DESTINATION_NAME: 'tsbeducation.com'
+PLATFORM_NAME: 'Mutalashi'
+PLATFORM_DESTINATION_NAME: 'example.com'
 FEEDBACK_EMAIL_ADDRESS: 'support@example.com'
 
 COURSE_ENROLLMENT:
@@ -22,8 +22,8 @@ TAB_LAYOUTS_ENABLED: true
 
 FACEBOOK:
     ENABLED: true
-    FACEBOOK_APP_ID: '248080865833833'
+    FACEBOOK_APP_ID: '1463337977100619'
 
 GOOGLE:
     ENABLED: true
-    GOOGLE_PLUS_KEY: '992313764382-b6gr8orjbstbtuip11ki6pb73i9ao3qu.apps.googleusercontent.com'
+    GOOGLE_PLUS_KEY: '671521085289-qvevkrglqjlisirnrrafgaq9smlciaef.apps.googleusercontent.com'
