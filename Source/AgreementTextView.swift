@@ -25,26 +25,26 @@ class AgreementTextView: UITextView {
         let style = OEXMutableTextStyle(weight: .normal, size: .xSmall, color: OEXStyles.shared().neutralDark())
         style.lineBreakMode = .byWordWrapping
         style.alignment = .center
-        let platformName = config?.platformName() ?? ""
-        let prefix: String
-        switch type {
-        case .signIn:
-            prefix = Strings.Agreement.textPrefixSignin
-            break
-        case .signUp:
-            prefix = Strings.Agreement.textPrefixSignup
-            break
-        }
-        let eulaText = Strings.Agreement.linkTextEula(platformName: platformName)
-        let tosText = Strings.Agreement.linkTextTos(platformName: platformName)
+//        let platformName = config?.platformName() ?? ""
+//        let prefix: String
+//        switch type {
+//        case .signIn:
+//            prefix = Strings.Agreement.textPrefixSignin
+//            break
+//        case .signUp:
+//            prefix = Strings.Agreement.textPrefixSignup
+//            break
+//        }
+//        let eulaText = Strings.Agreement.linkTextEula(platformName: platformName)
+//        let tosText = Strings.Agreement.linkTextTos(platformName: platformName)
         let privacyPolicyText = Strings.Agreement.linkTextPrivacyPolicy
-        let agreementText = "\(prefix) you agree to the (Terms & Conditions Link here)" //"\(prefix)\(Strings.Agreement.text(eula: eulaText, tos: tosText, privacyPolicy: privacyPolicyText))"
-        var attributedString = style.attributedString(withText: agreementText)
-        if let eulaUrl = config?.agreementURLsConfig.eulaURL,
-            let tosUrl = config?.agreementURLsConfig.tosURL,
+//        let agreementText = "\(prefix)\(Strings.Agreement.text(eula: eulaText, tos: tosText, privacyPolicy: privacyPolicyText))"
+        var attributedString = style.attributedString(withText: privacyPolicyText)
+        if //let eulaUrl = config?.agreementURLsConfig.eulaURL,
+           // let tosUrl = config?.agreementURLsConfig.tosURL,
             let privacyPolicyUrl = config?.agreementURLsConfig.privacyPolicyURL {
-            attributedString = attributedString.addLink(on: eulaText, value: eulaUrl)
-            attributedString = attributedString.addLink(on: tosText, value: tosUrl)
+//            attributedString = attributedString.addLink(on: eulaText, value: eulaUrl)
+//            attributedString = attributedString.addLink(on: tosText, value: tosUrl)
             attributedString = attributedString.addLink(on: privacyPolicyText, value: privacyPolicyUrl)
         }
         attributedText = attributedString
