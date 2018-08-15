@@ -88,7 +88,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     [self getFormFields];
     [self setAccessibilityIdentifiers];
 }
-    //set accessibility identifiers for the developer automation use
+//set accessibility identifiers for the developer automation use
 - (void)setAccessibilityIdentifiers {
     self.registerButton.accessibilityIdentifier = @"RegistrationViewController:register-button";
     self.agreementTextView.accessibilityIdentifier = @"RegistrationViewController:agreement-text-view";
@@ -129,7 +129,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
 // This method will set default ui.
 
 - (void)initializeViews {
-
+    
     ////Create and initalize 'btnCreateAccount' button
     self.registerButton = [[UIButton alloc] init];
     
@@ -139,7 +139,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     
     [self.registerButton applyButtonStyleWithStyle:[self.environment.styles filledPrimaryButtonStyle] withTitle:[Strings registrationCreateMyAccount]];
     self.registerButton.accessibilityIdentifier = @"register";
-
+    
     ////Create progrssIndicator as subview to btnCreateAccount
     self.progressIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     [self.registerButton addSubview:self.progressIndicator];
@@ -153,7 +153,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     [self.toggleOptionalFieldsButton setBackgroundColor:[UIColor whiteColor]];
     [self.toggleOptionalFieldsButton setAttributedTitle: [self.toggleButtonStyle attributedStringWithText:[Strings registrationShowOptionalFields]] forState:UIControlStateNormal];
     [self.toggleOptionalFieldsButton addTarget:self action:@selector(toggleOptionalFields:) forControlEvents:UIControlEventTouchUpInside];
-
+    
     UITapGestureRecognizer* tapGesture = [[UITapGestureRecognizer alloc] init];
     [tapGesture addTarget:self action:@selector(scrollViewTapped:)];
     [self.scrollView addGestureRecognizer:tapGesture];
@@ -220,34 +220,38 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
 }
 
 - (void)refreshFormFields {
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        // Add view to scroll view if field is not optional and it is not agreement field.
-        UIView* view = fieldController.view;
-        if(fieldController.field.isRequired && ![self shouldFilterField:fieldController.field]) {
-            [self.scrollView addSubview:view];
-            [view setNeedsLayout];
-            [view layoutIfNeeded];
-        }
-        else {
-            [view removeFromSuperview];
-        }
-    }
-
-    // Actually show the optional fields if necessary
-    if(self.isShowingOptionalFields) {
+    
+    if (self.externalAccessToken && self.externalProvider) {
+        
         for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-            if(![fieldController field].isRequired && ![self shouldFilterField:fieldController.field]) {
-                UIView* view = fieldController.view;
+            // Add view to scroll view if field is not optional and it is not agreement field.
+            UIView* view = fieldController.view;
+            if(fieldController.field.isRequired && ![self shouldFilterField:fieldController.field]) {
                 [self.scrollView addSubview:view];
                 [view setNeedsLayout];
                 [view layoutIfNeeded];
             }
+            else {
+                [view removeFromSuperview];
+            }
         }
+        
+        // Actually show the optional fields if necessary
+        if(self.isShowingOptionalFields) {
+            for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+                if(![fieldController field].isRequired && ![self shouldFilterField:fieldController.field]) {
+                    UIView* view = fieldController.view;
+                    [self.scrollView addSubview:view];
+                    [view setNeedsLayout];
+                    [view layoutIfNeeded];
+                }
+            }
+        }
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
+        [self viewDidLayoutSubviews];
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
     }
-    [self.view setNeedsLayout];
-    [self.view layoutIfNeeded];
-    [self viewDidLayoutSubviews];
-    UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
 }
 
 - (void)updateViewConstraints {
@@ -280,57 +284,60 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     CGSize size = [self.currentHeadingView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
     offset = topSpacing + size.height;
     
-    BOOL isOptionalFieldPresent = NO;
-    
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        UIView* view = fieldController.view;
-        // Add view to scroll view if field is not optional and it is not agreement field.
-        if([fieldController field].isRequired && view.superview != nil) {
-            [view layoutIfNeeded];
-            [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
-            offset = offset + view.frame.size.height;
-        }
-        if(![fieldController field].isRequired) {
-            isOptionalFieldPresent = YES;
-        }
-    }
-    
-    if (isOptionalFieldPresent) {
-        //Add the optional field toggle
-        CGFloat buttonWidth = 150;
-        CGFloat buttonHeight = 30;
-        [self.scrollView addSubview:self.optionalFieldsSeparator];
-        [self.toggleOptionalFieldsButton setFrame:CGRectMake(self.view.frame.size.width / 2 - buttonWidth / 2, offset, buttonWidth, buttonHeight)];
-        [self.scrollView addSubview:self.toggleOptionalFieldsButton];
-        self.optionalFieldsSeparator.frame = CGRectMake(horizontalSpacing, self.toggleOptionalFieldsButton.center.y, contentWidth, 1);
-        self.optionalFieldsSeparator.center = self.toggleOptionalFieldsButton.center;
+    if (self.externalAccessToken && self.externalProvider) {
         
-        offset = offset + buttonHeight + 10;
-    }
-    
-    // Actually show the optional fields if necessary
-    for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
-        UIView* view = fieldController.view;
-        if(![fieldController field].isRequired && view.superview != nil) {
-            [view layoutIfNeeded];
-            [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
-            [self.scrollView addSubview:view];
-            offset = offset + view.frame.size.height;
+        BOOL isOptionalFieldPresent = NO;
+        
+        for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+            UIView* view = fieldController.view;
+            // Add view to scroll view if field is not optional and it is not agreement field.
+            if([fieldController field].isRequired && view.superview != nil) {
+                [view layoutIfNeeded];
+                [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
+                offset = offset + view.frame.size.height;
+            }
+            if(![fieldController field].isRequired) {
+                isOptionalFieldPresent = YES;
+            }
         }
+        
+        if (isOptionalFieldPresent) {
+            //Add the optional field toggle
+            CGFloat buttonWidth = 150;
+            CGFloat buttonHeight = 30;
+            [self.scrollView addSubview:self.optionalFieldsSeparator];
+            [self.toggleOptionalFieldsButton setFrame:CGRectMake(self.view.frame.size.width / 2 - buttonWidth / 2, offset, buttonWidth, buttonHeight)];
+            [self.scrollView addSubview:self.toggleOptionalFieldsButton];
+            self.optionalFieldsSeparator.frame = CGRectMake(horizontalSpacing, self.toggleOptionalFieldsButton.center.y, contentWidth, 1);
+            self.optionalFieldsSeparator.center = self.toggleOptionalFieldsButton.center;
+            
+            offset = offset + buttonHeight + 10;
+        }
+        
+        // Actually show the optional fields if necessary
+        for(id <OEXRegistrationFieldController>fieldController in self.fieldControllers) {
+            UIView* view = fieldController.view;
+            if(![fieldController field].isRequired && view.superview != nil) {
+                [view layoutIfNeeded];
+                [view setFrame:CGRectMake(0, offset, width, view.frame.size.height)];
+                [self.scrollView addSubview:view];
+                offset = offset + view.frame.size.height;
+            }
+        }
+        
+        [self.registerButton setFrame:CGRectMake(horizontalSpacing, offset, contentWidth, 40)];
+        
+        const int progressIndicatorCenterX = [self isRTL] ? 40 : self.registerButton.frame.size.width - 40;
+        
+        self.progressIndicator.center = CGPointMake(progressIndicatorCenterX, self.registerButton.frame.size.height / 2);
+        
+        [self.scrollView addSubview:self.registerButton];
+        offset = offset + 40;
+        
+        [self.scrollView addSubview:self.agreementTextView];
+        [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
+        offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     }
-    
-    [self.registerButton setFrame:CGRectMake(horizontalSpacing, offset, contentWidth, 40)];
-
-    const int progressIndicatorCenterX = [self isRTL] ? 40 : self.registerButton.frame.size.width - 40;
-
-    self.progressIndicator.center = CGPointMake(progressIndicatorCenterX, self.registerButton.frame.size.height / 2);
-    
-    [self.scrollView addSubview:self.registerButton];
-    offset = offset + 40;
-    
-    [self.scrollView addSubview:self.agreementTextView];
-    [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
-    offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     [self.scrollView setContentSize:CGSizeMake(width, offset)];
 }
 
@@ -379,7 +386,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
 - (void) configureViewForSocial:(id<OEXExternalAuthProvider>)provider accessToken:(NSString *) accessToken userDetails:(OEXRegisteringUserDetails *) userDetails {
     // No account already, so continue registration process
     __block OEXRegistrationViewController *blockSelf = self;
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         UIView* headingView = [[OEXUsingExternalAuthHeadingView alloc] initWithFrame:CGRectZero serviceName:provider.displayName];
         [blockSelf useHeadingView:headingView];
@@ -418,7 +425,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     // Dictionary for registration parameters
     NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
     BOOL hasError = NO;
-
+    
     for(id <OEXRegistrationFieldController> controller in self.fieldControllers) {
         if([controller isValidInput]) {
             if([controller hasValue]) {
@@ -429,7 +436,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
             hasError = YES;
         }
     }
-
+    
     if(hasError) {
         [self showProgress:NO];
         [self refreshFormFields];
@@ -438,7 +445,7 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     }
     //Setting parameter 'honor_code'='true'
     [parameters setObject:@"true" forKey:@"honor_code"];
-
+    
     //As user is agree to the license setting 'terms_of_service'='true'
     [parameters setObject:@"true" forKey:@"terms_of_service"];
     
@@ -447,9 +454,9 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
         [parameters setSafeObject:self.externalProvider.backendName forKey:@"provider"];
         [parameters setSafeObject:self.environment.config.oauthClientID forKey:@"client_id"];
     }
-
+    
     [self registerWithParameters:parameters];
-
+    
 }
 
 - (void) showInputErrorAlert {
@@ -458,8 +465,8 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
     [[UIAlertController alloc] showAlertWithTitle:[Strings registrationErrorAlertTitle] message:[Strings registrationErrorAlertMessage] cancelButtonTitle:[Strings ok] onViewController:self tapBlock:^(UIAlertController * _Nonnull controller, UIAlertAction * _Nonnull action, NSInteger index) {
         for(id <OEXRegistrationFieldController> controller in weakSelf.fieldControllers) {
             if(![controller isValidInput]) {
-                    [[controller accessibleInputField] becomeFirstResponder];
-                    break;
+                [[controller accessibleInputField] becomeFirstResponder];
+                break;
             }
         }
     }];
