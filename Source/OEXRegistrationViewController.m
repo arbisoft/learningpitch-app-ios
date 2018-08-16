@@ -334,10 +334,10 @@ NSString* const OEXExternalRegistrationWithExistingAccountNotification = @"OEXEx
         [self.scrollView addSubview:self.registerButton];
         offset = offset + 40;
         
-        [self.scrollView addSubview:self.agreementTextView];
-        [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
-        offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     }
+    [self.scrollView addSubview:self.agreementTextView];
+    [self.agreementTextView setFrame:CGRectMake(horizontalSpacing, offset + 10, width - 2 * horizontalSpacing, self.agreementTextView.frame.size.height)];
+    offset = offset + self.agreementTextView.frame.size.height + [[OEXStyles sharedStyles] standardHorizontalMargin] * 2;
     [self.scrollView setContentSize:CGSizeMake(width, offset)];
 }
 
