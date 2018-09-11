@@ -3,6 +3,7 @@ ENVIRONMENT_DISPLAY_NAME: ''
 PLATFORM_NAME: 'My Inter Academy'
 PLATFORM_DESTINATION_NAME: 'myinteracademy.com'
 FEEDBACK_EMAIL_ADDRESS: 'feedback@myinteracademy.com'
+ORGANIZATION_CODE: 'MIA'
 
 COURSE_ENROLLMENT:
     TYPE: 'native'
