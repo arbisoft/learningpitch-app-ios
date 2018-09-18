@@ -1,4 +1,4 @@
-API_HOST_URL: 'https://courses.tsbeducation.com'
+API_HOST_URL: 'https://edbox.tsbeducation.com'
 ENVIRONMENT_DISPLAY_NAME: ''
 PLATFORM_NAME: 'TSB Education'
 PLATFORM_DESTINATION_NAME: 'tsbeducation.com'
