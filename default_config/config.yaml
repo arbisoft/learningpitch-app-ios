@@ -1,4 +1,4 @@
-API_HOST_URL: 'https://courses.myinteracademy.com'
+API_HOST_URL: 'https://edbox.myinteracademy.com'
 ENVIRONMENT_DISPLAY_NAME: ''
 PLATFORM_NAME: 'My Inter Academy'
 PLATFORM_DESTINATION_NAME: 'myinteracademy.com'
